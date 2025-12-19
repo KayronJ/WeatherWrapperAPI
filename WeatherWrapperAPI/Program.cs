@@ -1,18 +1,46 @@
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+using WeatherWrapperAPI.Configuration;
+using WeatherWrapperAPI.Infrastructure.ExternalClients;
+using WeatherWrapperAPI.Services;
+using WeatherWrapperAPI.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddControllers().
+    AddJsonOptions(options => 
+    { 
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddFixedWindowLimiter("fixed", options =>
+    {
+        options.PermitLimit = 10;
+        options.Window = TimeSpan.FromSeconds(10);
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 0;
+    });
+});
+
+builder.Services.AddOptions<VisualCrossingOptions>()
+    .BindConfiguration("VisualCrossingWeather");
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IExternalWeatherClient, VisualCrossingClient>();
+builder.Services.AddScoped<IWeatherService, WeatherService>();
+
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 
