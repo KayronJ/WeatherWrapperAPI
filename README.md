@@ -6,7 +6,7 @@ https://roadmap.sh/projects/weather-api-wrapper-service
 
 The application allows weather queries, returning only necessary values ​​without data pollution.
 
-Implementing Redis(STILL TO IMPLEMENT) for caching and system optimization, and also adding rate limiting requests to avoid DDoS attacks.
+Implementing Redis for caching and system optimization, and also adding rate limiting requests to avoid DDoS attacks.
 
 
 <img width="2048" height="1059" alt="image" src="https://github.com/user-attachments/assets/a1961448-efc3-472d-b0a3-82cb1ddc82d2" />
@@ -28,6 +28,8 @@ I opted for **N-Layered** architecture over Clean Architecture because I realize
 - **Dependency Injection (DI)**
 - **Swagger / Swashbuckle** (for documentation)
 - **DataAnnotations** (for validations)
+- **Docker**
+- Distributed cache with **Redis**
 
 --------------------------------------------------------------------------------------
 
@@ -37,6 +39,7 @@ I opted for **N-Layered** architecture over Clean Architecture because I realize
 
 -   [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 -   [Visual Crossing APY Key](https://www.visualcrossing.com/weather-api/)
+-   [Docker](https://docs.docker.com/engine/install/)
 
 ### Steps
 
@@ -46,9 +49,17 @@ I opted for **N-Layered** architecture over Clean Architecture because I realize
     git clone https://github.com/KayronJ/WeatherWrapperAPI.git
     cd WeatherWrapperAPI
     ```
+2.  Install Redis on Docker:
 
+    ```
+    docker run --name redis-cache -p 6379:6379 -d redis
+    ```
+3.  Start Redis on Docker:
+
+    ```
+    docker start redis-cache
+    ```
 2.  Configure an **ApiKey** on `appsettings.json`.
-
 
 3.  Execute the API:
 
