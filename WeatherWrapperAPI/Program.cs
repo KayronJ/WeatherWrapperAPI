@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using WeatherWrapperAPI.Configuration;
+using WeatherWrapperAPI.Infrastructure.Cache;
 using WeatherWrapperAPI.Infrastructure.ExternalClients;
+using WeatherWrapperAPI.Models.Interfaces;
 using WeatherWrapperAPI.Services;
 using WeatherWrapperAPI.Services.Interfaces;
 
@@ -29,9 +31,18 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddOptions<VisualCrossingOptions>()
     .BindConfiguration("VisualCrossingWeather");
 
+var sec = builder.Configuration.GetSection("RedisCache");
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = sec.GetValue<string>("RedisConnectionString");
+    options.InstanceName = sec.GetValue<string>("WeatherRedisInstanceName");
+});
+
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IExternalWeatherClient, VisualCrossingClient>();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
+builder.Services.AddScoped<ICacheRepository, RedisCacheRepository>();
 
 builder.Services.AddSwaggerGen();
 

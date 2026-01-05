@@ -1,4 +1,6 @@
-﻿using WeatherWrapperAPI.Models.Requests;
+﻿using System.Text.Json;
+using WeatherWrapperAPI.Models.Interfaces;
+using WeatherWrapperAPI.Models.Requests;
 using WeatherWrapperAPI.Models.Responses;
 using WeatherWrapperAPI.Services.Interfaces;
 
@@ -7,13 +9,21 @@ namespace WeatherWrapperAPI.Services
     public class WeatherService : IWeatherService
     {
         private readonly IExternalWeatherClient _externalWeatherClient;
-        public WeatherService(IExternalWeatherClient externalWeatherClient)
+        private readonly ICacheRepository _cache;
+        public WeatherService(IExternalWeatherClient externalWeatherClient, ICacheRepository cache)
         {
             _externalWeatherClient = externalWeatherClient;
+            _cache = cache;
         }
 
         public async Task<CurrentWeatherResponse> GetCurrentWeatherByCityAsync(CurrentWeatherRequest request)
         {
+
+            var cache = await _cache.GetAsync($"{request.City}-{request.TemperatureUnit}");
+
+            if(!string.IsNullOrEmpty(cache))
+                return JsonSerializer.Deserialize<CurrentWeatherResponse>(cache)!;
+
             var response = await _externalWeatherClient.GetCurrentWeatherByCityAsync(request.City, request.TemperatureUnit);
 
             var returnDto = new CurrentWeatherResponse
@@ -26,6 +36,8 @@ namespace WeatherWrapperAPI.Services
                 Humidity = response.CurrentConditions.Humidity,
                 Conditions = response.CurrentConditions.Conditions
             };
+
+            await _cache.SetAsync($"{request.City}-{request.TemperatureUnit}", JsonSerializer.Serialize(returnDto));
 
             return returnDto;
         }
