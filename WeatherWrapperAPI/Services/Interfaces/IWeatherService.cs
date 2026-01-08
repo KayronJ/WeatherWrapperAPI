@@ -6,5 +6,6 @@ namespace WeatherWrapperAPI.Services.Interfaces
     public interface IWeatherService
     {
         Task<CurrentWeatherResponse> GetCurrentWeatherByCityAsync(CurrentWeatherRequest request);
+        Task<ForecastWeatherResponse> GetDailyForecastWeatherByCityAsync(ForecastWeatherRequest request);
     }
 }

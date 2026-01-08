@@ -23,5 +23,13 @@ namespace WeatherWrapperAPI.Controllers
             var requestResult = await _weatherService.GetCurrentWeatherByCityAsync(request);
             return Ok(requestResult);
         }
+
+        [HttpGet]
+        [Route("forecast/daily")]
+        public async Task<IActionResult> GetDailyForecastWeatherAsync([FromQuery] ForecastWeatherRequest request)
+        {
+            var requestResult = await _weatherService.GetDailyForecastWeatherByCityAsync(request);
+            return Ok(requestResult);
+        }
     }
 }

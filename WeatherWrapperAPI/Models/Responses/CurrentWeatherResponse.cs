@@ -17,6 +17,6 @@ namespace WeatherWrapperAPI.Models.Responses
             [JsonPropertyName("humidity")]
             public double Humidity { get; set; }
             [JsonPropertyName("conditions")]
-            public string Conditions { get; set; }
+            public required string Conditions { get; set; }
     }
 }

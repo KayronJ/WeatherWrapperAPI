@@ -38,5 +38,26 @@ namespace WeatherWrapperAPI.Infrastructure.ExternalClients
 
             return weatherResponse;
         }
+
+        public async Task<VisualCrossingApiResponse> GetDailyForecastWeatherByCityAsync(string city, ETemperatureUnit temperatureUnit, int nextDays)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var queryParams = new Dictionary<string, string?>
+            {
+                ["unitGroup"] = temperatureUnit.ToString().ToLower(),
+                ["key"] = _visualCrossingSettings.ApiKey
+            };
+
+            var url = QueryHelpers.AddQueryString($"{_visualCrossingSettings.BaseUrl}{city}/next{nextDays}days", queryParams);
+
+            var response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var weatherResponse = System.Text.Json.JsonSerializer.Deserialize<VisualCrossingApiResponse>(content);
+
+            return weatherResponse;
+        }
     }
 }
