@@ -11,10 +11,15 @@ Implementing Redis for caching and system optimization, and also adding rate lim
 
 <img width="2048" height="1059" alt="image" src="https://github.com/user-attachments/assets/a1961448-efc3-472d-b0a3-82cb1ddc82d2" />
 
+![.NET](https://img.shields.io/badge/.NET-8-512BD4)
+![Redis](https://img.shields.io/badge/Redis-DC382D)
+![Docker](https://img.shields.io/badge/Docker-2496ED)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 --------------------------------------------------------------------------------------
 
 ## Architectural desition
-I opted for **N-Layered** architecture over Clean Architecture because I realized it would be over-engineering. Since it's an API wrapper without domain logic and complex behaviors, Clean Architecture would only add unnecessary complexity.
+I opted for a **simple Layered Architecture** instead of Clean Architecture, since the project is a lightweight API wrapper with minimal domain complexity.
 
 --------------------------------------------------------------------------------------
 
